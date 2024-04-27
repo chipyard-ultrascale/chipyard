@@ -305,8 +305,10 @@ endif
 # build output directory for compilation
 #########################################################################################
 # output for all project builds
+shared_path = /work_extra/chipyard_hbm_ddr4
 generated_src_name ?=generated-src
-gen_dir             =$(sim_dir)/$(generated_src_name)
+#gen_dir             =$(sim_dir)/$(generated_src_name)
+gen_dir             =$(shared_path)/$(generated_src_name)
 # per-project output directory
 build_dir           =$(gen_dir)/$(long_name)
 # final generated collateral per-project
