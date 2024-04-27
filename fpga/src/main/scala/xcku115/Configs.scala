@@ -16,12 +16,13 @@ import sifive.fpgashells.shell.{DesignKey}
 import sifive.fpgashells.shell.xilinx.{VCU118ShellPMOD, VCU118DDRSize}
 
 import testchipip.serdes.{SerialTLKey}
+import testchipip.tsi.{UARTTSIClientKey}
 
 import chipyard._
 import chipyard.harness._
 
 class WithDefaultPeripherals extends Config((site, here, up) => {
-  case PeripheryUARTKey => List(UARTParams(address = BigInt(0x64000000L)))
+  case UARTTSIClientKey => List(UARTParams(address = BigInt(0x64000000L)))
   case PeripherySPIKey => List(SPIParams(rAddress = BigInt(0x64001000L)))
   case VCU118ShellPMOD => "SDIO"
 })
