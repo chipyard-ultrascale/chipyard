@@ -305,12 +305,13 @@ endif
 # build output directory for compilation
 #########################################################################################
 # output for all project builds
+#user_plus_date = "[$(USER)|$(shell date +%Y%m%d)]"
 shared_path = /work_extra/chipyard_hbm_ddr4
 generated_src_name ?=generated-src
 #gen_dir             =$(sim_dir)/$(generated_src_name)
-gen_dir             =$(shared_path)/$(generated_src_name)
+gen_dir             =$(shared_path)/build/$(USER)/$(generated_src_name)
 # per-project output directory
-build_dir           =$(gen_dir)/$(long_name)
+build_dir           =$(gen_dir)/$(USER)-$(shell date +%Y%m%d)-$(shell date +%H%M)-$(long_name)
 # final generated collateral per-project
 GEN_COLLATERAL_DIR ?=$(build_dir)/gen-collateral
 
