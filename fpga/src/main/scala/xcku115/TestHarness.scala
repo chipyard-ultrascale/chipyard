@@ -17,21 +17,25 @@ import sifive.fpgashells.clocks._
 import sifive.blocks.devices.uart.{PeripheryUARTKey, UARTPortIO}
 import sifive.blocks.devices.spi.{PeripherySPIKey, SPIPortIO}
 import testchipip.tsi.{UARTTSIIO}
+import testchipip.tsi.{UARTTSIClientKey}
 
 import chipyard._
 import chipyard.harness._
-import testchipip.uart.UARTAdapter.uartno
+
 
 class VCU118FPGATestHarness(override implicit val p: Parameters) extends VCU118ShellBasicOverlays {
 
   def dp = designParameters
-
+  val has_uart_tsi = true;
   val pmod_is_sdio  = p(VCU118ShellPMOD) == "SDIO"
   val jtag_location = Some(if (pmod_is_sdio) "FMC_J2" else "PMOD_J52")
 
   // Order matters; ddr depends on sys_clock
   val uart      = Overlay(UARTOverlayKey, new UARTVCU118ShellPlacer(this, UARTShellInput()))
-  val sdio      = if (pmod_is_sdio) Some(Overlay(SPIOverlayKey, new SDIOVCU118ShellPlacer(this, SPIShellInput()))) else None
+  //val uart_tsi  = Overlay(UARTOverlayKey, new UARTVCU118ShellPlacer(this, UARTShellInput()))
+  val sdio      = if (pmod_is_sdio) 
+                    Some(Overlay(SPIOverlayKey, new SDIOVCU118ShellPlacer(this, SPIShellInput()))) 
+                  else None
   val jtag      = Overlay(JTAGDebugOverlayKey, new JTAGDebugVCU118ShellPlacer(this, JTAGDebugShellInput(location = jtag_location)))
   val cjtag     = Overlay(cJTAGDebugOverlayKey, new cJTAGDebugVCU118ShellPlacer(this, cJTAGDebugShellInput()))
   val jtagBScan = Overlay(JTAGDebugBScanOverlayKey, new JTAGDebugBScanVCU118ShellPlacer(this, JTAGDebugBScanShellInput()))
@@ -63,11 +67,12 @@ class VCU118FPGATestHarness(override implicit val p: Parameters) extends VCU118S
   /*** UART ***/
 
 // DOC include start: UartOverlay
-  // 1st UART goes to the VCU118 dedicated UART, using it as UARTTSI
-  val uart_tsi_io  = new UARTTSIIO(dp(PeripheryUARTKey).head)
-
-  val io_uart_bb = BundleBridgeSource(() => (uart_tsi_io.uart))
+  //1st UART goes to the VCU118 dedicated UART, using it as UARTTSI
+  val io_uart_bb = BundleBridgeSource(() => (new UARTPortIO(dp(PeripheryUARTKey).head)))
   dp(UARTOverlayKey).head.place(UARTDesignInput(io_uart_bb))
+
+  val io_uart_sink_bb = BundleBridgeSource(() => (new UARTPortIO(dp(UARTTSIClientKey).head.uartParams)))
+  io_uart_sink_bb.makeSink()
 // DOC include end: UartOverlay
 
   /*** SPI ***/

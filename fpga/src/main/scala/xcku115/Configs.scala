@@ -22,7 +22,7 @@ import chipyard._
 import chipyard.harness._
 
 class WithDefaultPeripherals extends Config((site, here, up) => {
-  case UARTTSIClientKey => List(UARTParams(address = BigInt(0x64000000L)))
+  //case PeripheryUARTKey => List(UARTParams(address = BigInt(0x64000000L)))
   case PeripherySPIKey => List(SPIParams(rAddress = BigInt(0x64001000L)))
   case VCU118ShellPMOD => "SDIO"
 })
@@ -53,6 +53,7 @@ class WithVCU118Tweaks extends Config(
   new WithFPGAFrequency(100) ++ // default 100MHz freq
   // harness binders
   new WithUARTTSI ++
+  new WithUART ++
   new WithSPISDCard ++
   new WithDDRMem ++
   new WithJTAG ++

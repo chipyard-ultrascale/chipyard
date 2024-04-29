@@ -16,7 +16,7 @@ import chipyard.iobinders._
 /*** UART ***/
 class WithUART extends HarnessBinder({
   case (th: VCU118FPGATestHarnessImp, port: UARTPort, chipId: Int) => {
-    th.vcu118Outer.io_uart_bb.bundle <> port.io
+    th.vcu118Outer.io_uart_sink_bb.bundle <> port.io
   }
 })
 
