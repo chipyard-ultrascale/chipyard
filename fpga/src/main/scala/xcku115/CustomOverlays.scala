@@ -15,7 +15,7 @@ import sifive.fpgashells.devices.xilinx.xilinxvcu118mig.{XilinxVCU118MIGPads, Xi
 class SysClock2VCU118PlacedOverlay(val shell: VCU118ShellBasicOverlays, name: String, val designInput: ClockInputDesignInput, val shellInput: ClockInputShellInput)
   extends LVDSClockInputXilinxPlacedOverlay(name, designInput, shellInput)
 {
-  val node = shell { ClockSourceNode(freqMHz = 250, jitterPS = 50)(ValName(name)) }
+  val node = shell { ClockSourceNode(freqMHz = 100, jitterPS = 50)(ValName(name)) }
 
   shell { InModuleBody {
     shell.xdc.addPackagePin(io.p, "AW26")

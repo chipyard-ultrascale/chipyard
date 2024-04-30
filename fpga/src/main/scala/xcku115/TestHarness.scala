@@ -32,7 +32,7 @@ class VCU118FPGATestHarness(override implicit val p: Parameters) extends VCU118S
 
   // Order matters; ddr depends on sys_clock
   val uart      = Overlay(UARTOverlayKey, new UARTVCU118ShellPlacer(this, UARTShellInput()))
-  //val uart_tsi  = Overlay(UARTOverlayKey, new UARTVCU118ShellPlacer(this, UARTShellInput()))
+  val uart_tsi  = Overlay(UARTOverlayKey, new UARTVCU118ShellPlacer(this, UARTShellInput()))
   val sdio      = if (pmod_is_sdio) 
                     Some(Overlay(SPIOverlayKey, new SDIOVCU118ShellPlacer(this, SPIShellInput()))) 
                   else None
@@ -80,7 +80,8 @@ class VCU118FPGATestHarness(override implicit val p: Parameters) extends VCU118S
   // 1st SPI goes to the VCU118 SDIO port
 
   val io_spi_bb = BundleBridgeSource(() => (new SPIPortIO(dp(PeripherySPIKey).head)))
-  dp(SPIOverlayKey).head.place(SPIDesignInput(dp(PeripherySPIKey).head, io_spi_bb))
+  io_spi_bb.makeSink()
+  //dp(SPIOverlayKey).head.place(SPIDesignInput(dp(PeripherySPIKey).head, io_spi_bb))
 
   /*** DDR ***/
 
