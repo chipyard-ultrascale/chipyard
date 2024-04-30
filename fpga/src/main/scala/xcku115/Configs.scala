@@ -32,11 +32,10 @@ class WithSystemModifications extends Config((site, here, up) => {
   case BootROMLocated(x) => up(BootROMLocated(x), site).map { p =>
     // invoke makefile for sdboot
     val freqMHz = (site(SystemBusKey).dtsFrequency.get / (1000 * 1000)).toLong
-    val make = s"make -C fpga/src/main/resources/vcu118/sdboot PBUS_CLK=${freqMHz} bin"
-    require (make.! == 0, "Failed to build bootrom")
-    p.copy(hang = 0x10000, contentFileName = s"./fpga/src/main/resources/vcu118/sdboot/build/sdboot.bin")
+    // val make = s"make -C fpga/src/main/resources/vcu118/sdboot PBUS_CLK=${freqMHz} bin"
+    // require (make.! == 0, "Failed to build bootrom")
+    p.copy(hang = 0x10000, contentFileName = s"./fpga/bootrom.rv64.img")
   }
-  case ExtMem => up(ExtMem, site).map(x => x.copy(master = x.master.copy(size = site(VCU118DDRSize)))) // set extmem to DDR size
   case SerialTLKey => Nil // remove serialized tl port
 })
 
@@ -63,7 +62,8 @@ class WithVCU118Tweaks extends Config(
   new chipyard.config.WithTLBackingMemory ++ // use TL backing memory
   new WithSystemModifications ++ // setup busses, use sdboot bootrom, setup ext. mem. size
   new freechips.rocketchip.subsystem.WithoutTLMonitors ++
-  new freechips.rocketchip.subsystem.WithNMemoryChannels(1)
+  new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++
+  new freechips.rocketchip.subsystem.WithExtMemSize((VCU118DDRSize.default).head)
 )
 
 class RocketVCU118Config extends Config(
